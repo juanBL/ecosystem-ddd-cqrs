@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+#docker compose exec web yarn lint
+#docker compose exec web yarn test

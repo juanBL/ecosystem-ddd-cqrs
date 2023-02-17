@@ -1,0 +1,70 @@
+version: '3.7'
+
+services:
+  shared_rabbitmq:
+    container_name: app-core-rabbitmq
+    image: 'rabbitmq:3.10.5-management'
+    restart: unless-stopped
+    ports:
+      - "5630:5672"
+      - "8090:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=app
+      - RABBITMQ_DEFAULT_PASS=app
+
+#  shared_prometheus:
+#    container_name: app-core-prometheus
+#    image: prom/prometheus:v2.36.1
+#    volumes:
+#      - ./etc/prometheus/:/etc/prometheus/
+#    command:
+#      - '--config.file=/etc/prometheus/prometheus.yml'
+#      - '--storage.tsdb.path=/prometheus'
+#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+#      - '--web.console.templates=/usr/share/prometheus/consoles'
+#    ports:
+#      - "9999:9090"
+
+  core_mysql:
+    container_name: app-core-mysql
+    image: mariadb:10.7.4
+    ports:
+      - "3360:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD", "mysqladmin", "--user=root", "--password=", "--host=127.0.0.1", "ping", "--silent"]
+      interval: 2s
+      timeout: 10s
+      retries: 10
+    command: ["--default-authentication-plugin=mysql_native_password"]
+
+  core_elasticsearch:
+    container_name: app-core-elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.3
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  api_backend_php:
+    container_name: app-core-api_backend-php
+    build:
+      target: development
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8040:8040"
+      - "9040:9001"
+    volumes:
+      - .:/var/www/html/:delegated
+    depends_on:
+      - shared_rabbitmq
+      - core_elasticsearch
+      - core_mysql
+    command: symfony serve --dir=apps/api/backend/public --port=8040

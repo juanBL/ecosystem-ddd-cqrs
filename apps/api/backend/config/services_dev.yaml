@@ -1,0 +1,25 @@
+framework:
+  test: true
+
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+
+  App\Tests\:
+    resource: '../../../../tests'
+
+  # -- IMPLEMENTATIONS SELECTOR --
+  App\Shared\Domain\Bus\Event\EventBus: '@App\Shared\Infrastructure\Bus\Event\SymfonyRequestInjectorEventBusDecorator'
+
+  App\Shared\Infrastructure\Bus\Event\SymfonyRequestInjectorEventBusDecorator:
+    autowire: false
+    arguments:
+      - '@App\Shared\Infrastructure\Bus\Event\InMemory\InMemorySymfonyEventBus'
+      - '@request_stack'
+
+  App\Shared\Infrastructure\Symfony\Profiler\EventBusDataCollector:
+    tags:
+      - name: data_collector
+        id: 'App\Shared\Infrastructure\Symfony\Profiler\EventBusDataCollector'
+        template: 'event-bus.html.twig'

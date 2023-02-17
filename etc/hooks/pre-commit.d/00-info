@@ -1,0 +1,4 @@
+#!/bin/bash
+set -e
+echo -e "\n."
+cat etc/hooks/ascii-logo.txt

@@ -1,0 +1,13 @@
+{% extends '@!NelmioApiDoc/SwaggerUi/index.html.twig' %}
+
+{% block header %}
+    <a style="text-decoration: none;" id="logo" href="https://app.com/" target="_blank">
+        Developer API
+    </a>
+{% endblock %}
+
+{# Import your own stylesheet #}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/custom-swagger-styles.css') }}">
+{% endblock stylesheets %}

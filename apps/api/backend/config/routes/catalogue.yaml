@@ -1,0 +1,4 @@
+catalogue.rest.get.album.album:
+  path: /api/album
+  controller: App\Apps\Api\Backend\Controller\Catalogue\AlbumGetController
+  methods: [ GET ]

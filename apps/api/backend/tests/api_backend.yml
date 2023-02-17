@@ -1,0 +1,18 @@
+api_backend:
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      kernel:
+        class: App\Apps\Api\Backend\ApiBackendKernel
+        environment: test
+      bootstrap: apps/bootstrap.php
+    Behat\MinkExtension:
+      sessions:
+        symfony:
+          symfony: ~
+      base_url: ''
+
+  suites:
+    health_check:
+      paths: [ apps/api/backend/tests/features/health_check ]
+      contexts:
+        - App\Tests\Shared\Infrastructure\Behat\ApiContext

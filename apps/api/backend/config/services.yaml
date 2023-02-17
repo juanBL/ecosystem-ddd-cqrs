@@ -1,0 +1,83 @@
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+
+  # Configure
+  _instanceof:
+    App\Shared\Domain\Bus\Event\DomainEventSubscriber:
+      tags: ['app.domain_event_subscriber']
+
+    App\Shared\Domain\Bus\Command\CommandHandler:
+      tags: ['app.command_handler']
+
+    App\Shared\Domain\Bus\Query\QueryHandler:
+      tags: ['app.query_handler']
+
+  App\Apps\Api\Backend\Controller\:
+    resource: '../src/Controller'
+    tags: ['controller.service_arguments']
+
+
+  # Wire
+  App\User\:
+    resource: '../../../../src/User'
+
+  App\Shared\:
+    resource: '../../../../src/Shared'
+
+
+  # -- TAGGING --
+  App\Shared\Infrastructure\Bus\Event\InMemory\InMemorySymfonyEventBus:
+    arguments: [!tagged app.domain_event_subscriber]
+    lazy: true
+
+  App\Shared\Infrastructure\Bus\Event\DomainEventMapping:
+    arguments: [!tagged app.domain_event_subscriber]
+
+  App\Shared\Infrastructure\Bus\Event\DomainEventSubscriberLocator:
+    arguments: [!tagged app.domain_event_subscriber]
+
+  App\Shared\Infrastructure\Doctrine\DatabaseConnections:
+    arguments: [!tagged app.database_connection]
+
+  App\Shared\Infrastructure\Symfony\AddJsonBodyToRequestListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  App\Shared\Infrastructure\Symfony\ApiExceptionListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.exception, method: onException }
+
+
+  # -- APP DEFINITIONS --
+  # Command/Query Handlers
+  App\Shared\Infrastructure\Bus\Command\InMemorySymfonyCommandBus:
+    arguments: [!tagged app.command_handler]
+
+  App\Shared\Infrastructure\Bus\Query\InMemorySymfonyQueryBus:
+    arguments: [!tagged app.query_handler]
+
+  # RabbitMQ
+  App\Shared\Infrastructure\Bus\Event\RabbitMq\RabbitMqConnection:
+    arguments:
+      - host: '%env(RABBITMQ_HOST)%'
+        port: '%env(RABBITMQ_PORT)%'
+        vhost: '%env(RABBITMQ_VHOST)%'
+        login: '%env(RABBITMQ_LOGIN)%'
+        password: '%env(RABBITMQ_PASSWORD)%'
+        read_timeout: 2
+        write_timeout: 2
+        connect_timeout: 5
+
+  App\Shared\Infrastructure\Bus\Event\RabbitMq\RabbitMqEventBus:
+    arguments: ['@App\Shared\Infrastructure\Bus\Event\RabbitMq\RabbitMqConnection', '%env(RABBITMQ_EXCHANGE)%']
+
+  App\Shared\Infrastructure\Bus\Event\WithMonitoring\WithPrometheusMonitoringEventBus:
+    arguments: ['@App\Shared\Infrastructure\Monitoring\PrometheusMonitor', 'api_backend', '@App\Shared\Infrastructure\Bus\Event\RabbitMq\RabbitMqEventBus']
+
+  # -- IMPLEMENTATIONS SELECTOR --
+
+  # -- IMPLEMENTATIONS SELECTOR --
+  App\Shared\Domain\Bus\Event\EventBus: '@App\Shared\Infrastructure\Bus\Event\InMemory\InMemorySymfonyEventBus'
+

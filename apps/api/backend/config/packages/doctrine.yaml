@@ -1,0 +1,33 @@
+doctrine:
+    dbal:
+        default_connection: core
+        connections:
+            core:
+                url: 'mysql://root:@app-core-mysql:3306/core?serverVersion=5.7'
+                driver: pdo_mysql
+    orm:
+        auto_generate_proxy_classes: '%kernel.debug%'
+        enable_lazy_ghost_objects: true
+        default_entity_manager: core
+        entity_managers:
+            core:
+                connection: core
+when@prod:
+    doctrine:
+        orm:
+            auto_generate_proxy_classes: false
+            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            query_cache_driver:
+                type: pool
+                pool: doctrine.system_cache_pool
+            result_cache_driver:
+                type: pool
+                pool: doctrine.result_cache_pool
+
+    framework:
+        cache:
+            pools:
+                doctrine.result_cache_pool:
+                    adapter: cache.app
+                doctrine.system_cache_pool:
+                    adapter: cache.system

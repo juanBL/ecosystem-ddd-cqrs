@@ -1,0 +1,87 @@
+{
+  "name": "app/ecosystem",
+  "license": "MIT",
+  "type": "project",
+  "description": "App Ecosystem Domain-Driven Design, Hexagonal Architecture and CQRS in a Monorepository",
+  "require": {
+    "php": "^8.2",
+
+    "ext-json": "*",
+    "ext-pdo": "*",
+
+    "symfony/framework-bundle": "^6",
+    "symfony/messenger": "^6",
+    "symfony/dotenv": "^6",
+    "symfony/yaml": "^6",
+    "symfony/twig-bundle": "^6",
+    "symfony/validator": "^6",
+    "symfony/cache": "^6",
+
+    "lambdish/phunctional": "^2",
+
+    "ramsey/uuid": "^4",
+
+    "doctrine/dbal": "^3",
+    "doctrine/orm": "^2",
+
+    "ocramius/proxy-manager": "^2",
+    "laminas/laminas-zendframework-bridge": "^1",
+
+    "elasticsearch/elasticsearch": "^7",
+    "monolog/monolog": "^3",
+
+    "doctrine/doctrine-bundle": "^2.8",
+    "symfony/runtime": "^6.2",
+    "lexik/jwt-authentication-bundle": "^2.17",
+    "symfony/asset": "^6.2",
+    "nelmio/api-doc-bundle": "^4.11",
+    "symfony/monolog-bundle": "^3.8",
+    "endclothing/prometheus_client_php": "^1.0"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-master",
+
+
+    "phpunit/phpunit": "^9",
+    "mockery/mockery": "^1",
+
+    "fakerphp/faker": "^1",
+
+    "symfony/error-handler": "^6",
+    "vimeo/psalm": "^4",
+    "friendsofphp/php-cs-fixer": "^3.8",
+    "symfony/var-dumper": "^6.2",
+    "symfony/debug-bundle": "^6.2",
+    "symfony/web-profiler-bundle": "^6.2",
+    "friends-of-behat/mink-extension": "^2.7",
+    "friends-of-behat/mink-browserkit-driver": "^1.6",
+    "friends-of-behat/symfony-extension": "^2.4",
+    "phpstan/phpstan": "^1.9",
+    "rector/rector": "^0.15.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\Apps\\Api\\Backend\\": "apps/api/backend/src",
+
+      "App\\": ["src"]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": ["tests"]
+    }
+  },
+  "minimum-stability": "RC",
+  "config": {
+    "allow-plugins": {
+      "ocramius/package-versions": true,
+      "symfony/runtime": true
+    }
+  },
+  "scripts": {
+    "auto-scripts": {
+      "cache:clear": "symfony-cmd",
+      "assets:install %PUBLIC_DIR%": "symfony-cmd"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+user.rest.post.user.login:
+  path: /login
+  controller: App\Apps\Api\Backend\Controller\User\LoginPostController
+  methods: [ POST ]
